@@ -1,0 +1,68 @@
+# Node class for Expression Tree
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+
+# Check if character is an operator
+def isOperator(c):
+    return c in ['+', '-', '*', '/', '^']
+
+
+# Construct Expression Tree from Prefix Expression
+def constructTree(prefix):
+    stack = []
+    # Traverse in reverse order
+    for symbol in reversed(prefix):
+        node = Node(symbol)
+        if isOperator(symbol):
+            node.left = stack.pop()
+            node.right = stack.pop()
+        stack.append(node)
+    return stack[-1]
+
+
+# Non-Recursive Postorder Traversal
+def postorderTraversal(root):
+    if root is None:
+        return
+    stack1 = [root]
+    stack2 = []
+
+    while stack1:
+        node = stack1.pop()
+        stack2.append(node)
+        if node.left:
+            stack1.append(node.left)
+        if node.right:
+            stack1.append(node.right)
+
+    # Print in postorder
+    print("Postorder Traversal:", end=" ")
+    while stack2:
+        print(stack2.pop().value, end=" ")
+    print()
+
+
+# Delete the tree (by freeing nodes)
+def deleteTree(root):
+    if root is None:
+        return
+    deleteTree(root.left)
+    deleteTree(root.right)
+    root.left = None
+    root.right = None
+    root.value = None
+
+
+# --- Example Usage ---
+expr = "+--a*bc/def"
+print("Prefix Expression:", expr)
+
+root = constructTree(expr)
+postorderTraversal(root)
+deleteTree(root)
+
+print("Tree deleted successfully.")
